@@ -1,238 +1,533 @@
-<!DOCTYPE html>
-
-<html lang="en" style="height: 100%">
-    <head>
-        <meta charset="utf-8">
-        <title>Login: PythonAnywhere</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Login: PythonAnywhere">
-        <meta name="author" content="PythonAnywhere LLP">
-        <meta name="google-site-verification" content="O4UxDrfcHjC44jybs2vajc1GgRkTKCTRgVzeV6I9V14" />
-
-
-        <!-- Le styles -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" />
-
-        <link rel="stylesheet" href="/static/CACHE/css/output.652c88b237cc.css" type="text/css" media="screen" />
-        <link rel="stylesheet" href="/static/CACHE/css/output.c184c0fc7128.css" type="text/css" /><link rel="stylesheet" href="/static/CACHE/css/output.5fe8ed73dcd2.css" type="text/css" media="screen" />
-
-        <!-- Le javascript -->
-        <script type="text/javascript">
-            var Anywhere = {};
-            Anywhere.urls = {};
-            Anywhere.csrfToken = "PGcLYQjefLXSyCg17lyHUm9UNpzVbgxhN1bRbxXcPn1JUcBWleIpBeJqcwAS1Sa5";
-        </script>
-        <script type="text/javascript" src="/static/CACHE/js/output.0076aee77b73.js"></script>
-        
-
-        <script type="text/javascript" src="/static/CACHE/js/output.afad2ae6938c.js"></script>
-        
-        
-
-    </head>
-
-     <body style="height:100%;">
-       <div style="min-height: 100%; position: relative;">
-        
-  
-    <nav class="navbar alert alert-warning alert-dismissible cookie-warning" style="padding: 10px 35px 5px 35px; min-height: auto;" id="id_cookie_warning_marker_for_response_middleware">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <p>
-        <small>
-          We use cookies to provide social media features and to analyse our traffic. We also share information about your use of our site with our social media and analytics partners. <a href="/privacy/#cookies">Details here</a>.
-        </small>
-      </p>
-    </nav>
-  
-
-        
-  <nav class="navbar top-nav hidden-xs">
-    <div class="container">
-      <ul class="nav navbar-nav navbar-right">
-        <li class=""><a href="" class="feedback_link">Send feedback</a></li>
-<li class=""><a href="/forums/" class="forums_link">Forums</a></li>
-<li class=""><a href="https://help.pythonanywhere.com/" class="help_link">Help</a></li>
-<li class=""><a href="https://blog.pythonanywhere.com/" class="blog_link">Blog</a></li>
-
-  <li class=""><a style="font-weight: bold;" href="/pricing/" class="pricing_link">Pricing & signup</a></li>
-  <li class=""><a href="/login/?next=/login/" class="login_link">Log in</a></li>
-
-
-      </ul>
-    </div>
-  </nav>
-
-  
-
-
-
-
-  <nav class="navbar primary-navbar">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main_nav" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/">
-          <img id='id_logo' src="/static/anywhere/images/PA-logo.svg" width="225">
-        </a>
-      </div>
-
-      <div class="collapse navbar-collapse" id="main_nav">
-        <ul class="nav navbar-nav navbar-right">
-          
-            
-
-          
-          <li class="visible-xs"><a href="" class="feedback_link">Send feedback</a></li>
-<li class="visible-xs"><a href="/forums/" class="forums_link">Forums</a></li>
-<li class="visible-xs"><a href="https://help.pythonanywhere.com/" class="help_link">Help</a></li>
-<li class="visible-xs"><a href="https://blog.pythonanywhere.com/" class="blog_link">Blog</a></li>
-
-  <li class="visible-xs"><a style="font-weight: bold;" href="/pricing/" class="pricing_link">Pricing & signup</a></li>
-  <li class="visible-xs"><a href="/login/?next=/login/" class="login_link">Log in</a></li>
-
-
-        </ul>
-      </div>
-
-    </div>
-  </nav>
-
-  <div class="container">
-    
-
-  </div>
-
-  
-
-    
-  
-
-
-        
-  
-
-
-        
-    
-  <div class="container">
-    <div class="row">
-      <div class="col-md-5 col-md-offset-3">
-        
-  <h1>Log in</h1>
-
-  
-
-  <form class="form" action="" method="post"><input type='hidden' name='csrfmiddlewaretoken' value='PGcLYQjefLXSyCg17lyHUm9UNpzVbgxhN1bRbxXcPn1JUcBWleIpBeJqcwAS1Sa5' />
-    <table>
-  <style type="text/css" scoped>
-    /* hide stupid updowney arrows on number input */
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+function SingleConvState(input){
+    this.input = input;
+    this.answer = '';
+    this.next = false;
+    return this;
+};
+SingleConvState.prototype.hasNext = function(){
+    return this.next;
+};
+function ConvState(wrapper, SingleConvState, form, params, originalFormHtml) {
+    this.form = form;
+    this.wrapper = wrapper;
+    this.current = SingleConvState;
+    this.answers = {};
+    this.parameters = params;
+    this.originalFormHtml = originalFormHtml;
+    this.scrollDown = function() {
+        $(this.wrapper).find('#messages').stop().animate({scrollTop: $(this.wrapper).find('#messages')[0].scrollHeight}, 600);
+    }.bind(this);
+};
+ConvState.prototype.destroy = function(){
+    if(this.originalFormHtml) {
+        $(this.wrapper).html(this.originalFormHtml);
+        return true;
     }
-    input[type="number"] {
-      -moz-appearance: textfield;
+    return false;
+};
+ConvState.prototype.newState = function(options) {
+    var input = $.extend(true, {}, {
+        name: '',
+        noAnswer: false,
+        required: true,
+        questions: ['You forgot the question!'],
+        type: 'text',
+        multiple: false,
+        selected: "",
+        answers: []
+    }, options);
+    input.element = $('<input type="text" name="'+input.name+'"/>');
+    return new SingleConvState(input);
+};
+ConvState.prototype.next = function(){
+    // if(this.current.input.hasOwnProperty('callback')) {
+    //     if(typeof this.current.input.callback === 'string') {
+    //         window[this.current.input.callback](this);
+    //     } else {
+    //         this.current.input.callback(this);
+    //     }
+    // }
+    if(this.current.hasNext()){
+        this.current = this.current.next;
+        if(this.current.input.hasOwnProperty('fork') && this.current.input.hasOwnProperty('case')){
+            if(this.answers.hasOwnProperty(this.current.input.fork) && this.answers[this.current.input.fork].value != this.current.input.case) {
+                return this.next();
+            }
+            if(!this.answers.hasOwnProperty(this.current.input.fork)) {
+                return this.next();
+            }
+        }
+        return true;
+    } else {
+        return false;
     }
-  </style>
-  <input type="hidden" name="login_view-current_step" value="auth" id="id_login_view-current_step" />
-  
+};
+ConvState.prototype.printQuestion = function(){
+    var questions = this.current.input.questions;
+    var question = questions[Math.floor(Math.random() * questions.length)]; //get a random question from questions array
+    var ansWithin = question.match(/\{(.*?)\}(\:(\d)*)?/g); // searches for string replacements for answers and replaces them with previous aswers (warning: not checking if answer exists)
+    for(var key in ansWithin){
+        if(ansWithin.hasOwnProperty(key)){
+            var ansKey = ansWithin[key].replace(/\{|\}/g, "");
+            var ansFinalKey = ansKey;
+            var index = false;
+            if(ansKey.indexOf(':')!=-1){
+                ansFinalKey = ansFinalKey.split(':')[0];
+                index = ansKey.split(':')[1];
+            }
+            if(index!==false){
+                var replacement = this.answers[ansFinalKey].text.split(' ');
+                if(replacement.length >= index){
+                    question = question.replace(ansWithin[key], replacement[index]);
+                } else {
+                    question = question.replace(ansWithin[key], this.answers[ansFinalKey].text);
+                }
+            } else {
+                question = question.replace(ansWithin[key], this.answers[ansFinalKey].text);
+            }
+        }
+    }
+    var messageObj = $(this.wrapper).find('.message.typing');
+    setTimeout(function(){
+        messageObj.html(question);
+        messageObj.removeClass('typing').addClass('ready');
+        if(this.current.input.type=="select"){
+            this.printAnswers(this.current.input.answers, this.current.input.multiple);
+        }
+        this.scrollDown();
+        if(this.current.input.hasOwnProperty('noAnswer') && this.current.input.noAnswer===true) {
+            if(this.next()){
+                setTimeout(function(){
+                    var messageObj = $('<div class="message to typing"><div class="typing_loader"></div></div>');
+                    $(this.wrapper).find('#messages').append(messageObj);
+                    this.scrollDown();
+                    this.printQuestion();
+                }.bind(this),200);
+            } else {
+                this.parameters.eventList.onSubmitForm(this);
+            }
+        }
+        $(this.wrapper).find(this.parameters.inputIdHashTagName).focus();
+    }.bind(this), 500);
+};
+ConvState.prototype.printAnswers = function(answers, multiple){
+    var opened = false;
+    if(this.wrapper.find('div.options').height()!=0) opened = true;
+    this.wrapper.find('div.options div.option').remove();
+    if(multiple){
+        for(var i in answers){
+            if(answers.hasOwnProperty(i)){
+                var option = $('<div class="option">'+answers[i].text+'</div>')
+                    .data("answer", answers[i])
+                    .click(function(event){
+                        if(!Array.isArray(this.current.input.selected)) this.current.input.selected = [];
+                        var indexOf = this.current.input.selected.indexOf($(event.target).data("answer").value);
+                        if(indexOf == -1){
+                            this.current.input.selected.push($(event.target).data("answer").value);
+                            $(event.target).addClass('selected');
+                        } else {
+                            this.current.input.selected.splice(indexOf, 1);
+                            $(event.target).removeClass('selected');
+                        }
+                        this.wrapper.find(this.parameters.inputIdHashTagName).removeClass('error');
+                        this.wrapper.find(this.parameters.inputIdHashTagName).val('');
+                        if(this.current.input.selected.length > 0) {
+                            this.wrapper.find('button.submit').addClass('glow');
+                        } else {
+                            this.wrapper.find('button.submit').removeClass('glow');
+                        }
+                    }.bind(this));
+                this.wrapper.find('div.options').append(option);
+                $(window).trigger('dragreset');
+            }
+        }
+    } else {
+        for(var i in answers){
+            if(answers.hasOwnProperty(i)){
+                var option = $('<div class="option">'+answers[i].text+'</div>')
+                    .data("answer", answers[i])
+                    .click(function(event){
+                        this.current.input.selected = $(event.target).data("answer").value;
+                        this.wrapper.find(this.parameters.inputIdHashTagName).removeClass('error');
+                        this.wrapper.find(this.parameters.inputIdHashTagName).val('');
+                        this.answerWith($(event.target).data("answer").text, $(event.target).data("answer"));
+                        this.wrapper.find('div.options div.option').remove();
+                    }.bind(this));
+                this.wrapper.find('div.options').append(option);
+                $(window).trigger('dragreset');
+            }
+        }
+    }
+    if(!opened) {
+        var diff = $(this.wrapper).find('div.options').height();
+        var originalHeight = $(this.wrapper).find('.wrapper-messages').height();
+        $(this.wrapper).find('.wrapper-messages').data('originalHeight', originalHeight);
+        $(this.wrapper).find('.wrapper-messages').css({marginBottom: diff, maxHeight: originalHeight-diff});
+    }
+    if(this.parameters.selectInputStyle=='disable') {
+        $(this.wrapper).find('#'+this.parameters.inputIdName).prop('disabled', true);
+        $(this.wrapper).find('#'+this.parameters.inputIdName).attr('placeholder', this.parameters.selectInputDisabledText);
+    } else if(this.parameters.selectInputStyle=='hide') {
+        if(!this.current.input.multiple) {
+            $(this.wrapper).find('#'+this.parameters.inputIdName).css({display: 'none'});
+            $(this.wrapper).find('#convForm button').css({display: 'none'});
+        } else {
+            $(this.wrapper).find('#'+this.parameters.inputIdName).prop('disabled', true);
+            $(this.wrapper).find('#'+this.parameters.inputIdName).attr('placeholder', this.parameters.selectInputDisabledText);
+        }
+    }
 
-<p class="form-group">
-  <input type="text" name="auth-username" placeholder="Username or email address" tabindex="1" autocorrect="off" autocapitalize="off" class="form-control" maxlength="100" required id="id_auth-username" />
-  <span class="help-block">
-    No account? <a href="/pricing/" id="id_signup_link">Sign up here!</a>
-  </span>
-</p>
-<p class="form-group">
-  <input type="password" name="auth-password" placeholder="Password" tabindex="2" class="form-control" required id="id_auth-password" />
-  <span class="help-block">
-    <a href="/password_reset/">Forgotten password?</a>
-  </span>
-</p>
-<div class="clear"></div>
+};
+ConvState.prototype.answerWith = function(answerText, answerObject) {
+    //console.log('previous answer: ', answerObject);
+    //puts answer inside answers array to give questions access to previous answers
+    if(this.current.input.hasOwnProperty('name')){
+        if(typeof answerObject == 'string') {
+            if(this.current.input.type == 'tel')
+                answerObject = answerObject.replace(/\s|\(|\)|-/g, "");
+            this.answers[this.current.input.name] = {text: answerText, value: answerObject};
+            this.current.answer = {text: answerText, value: answerObject};
+            //console.log('previous answer: ', answerObject);
+        } else {
+            this.answers[this.current.input.name] = answerObject;
+            this.current.answer = answerObject;
+        }
+        if(this.current.input.type == 'select' && !this.current.input.multiple) {
+            $(this.current.input.element).val(answerObject.value).change();
+        } else {
+            $(this.current.input.element).val(answerObject).change();
+        }
+    }
+    //prints answer within messages wrapper
+    if(this.current.input.type == 'password')
+        answerText = answerText.replace(/./g, '*');
+    var message = $('<div class="message from">'+answerText+'</div>');
 
-</table>
+    if(this.current.input.type=='select' && this.parameters.selectInputStyle=='disable') {
+        $(this.wrapper).find('#'+this.parameters.inputIdName).prop('disabled', false);
+        $(this.wrapper).find('#'+this.parameters.inputIdName).attr('placeholder', this.parameters.placeHolder);
+    } else if(this.current.input.type=='select' && this.parameters.selectInputStyle=='hide') {
+        if(!this.current.input.multiple) {
+            $(this.wrapper).find('#'+this.parameters.inputIdName).css({display: 'block'});
+            $(this.wrapper).find('#convForm button').css({display: 'block'});
+        } else {
+            $(this.wrapper).find('#'+this.parameters.inputIdName).prop('disabled', false);
+            $(this.wrapper).find('#'+this.parameters.inputIdName).attr('placeholder', this.parameters.placeHolder);
+        }
+    }
 
-
+    //removes options before appending message so scroll animation runs without problems
+    $(this.wrapper).find("div.options div.option").remove();
     
-    <div style="margin-left: -9999px"><input type="submit" value=""/></div>
-
-    
-
-    
-    <button id="id_next" type="submit" class="btn btn-primary">Log in</button>
-
-    
-
-  </form>
-
-      </div>
-    </div>
-  </div>
 
 
+    var diff = $(this.wrapper).find('div.options').height();
+    var originalHeight = $(this.wrapper).find('.wrapper-messages').data('originalHeight');
+    $(this.wrapper).find('.wrapper-messages').css({marginBottom: diff, maxHeight: originalHeight});
+    $(this.wrapper).find(this.parameters.inputIdHashTagName).focus();
+    if (answerObject.hasOwnProperty('callback')) {
+        this.current.input['callback'] = answerObject.callback;
+    }
+    setTimeout(function(){
+        $(this.wrapper).find("#messages").append(message);
+        this.scrollDown();
+    }.bind(this), 100);
 
-        
-  <div class="footer-spacer"></div>
-  <footer id="id_copyright_div" class="footer">
-    <p>
-      Copyright &copy; 2011-2021 <a href="/about/company_details/">PythonAnywhere LLP</a>
-      &mdash;
-      <a href="/terms/">Terms</a>
-      &mdash;
-      <a href="/privacy/">Privacy & Cookies</a><br/>
-      </p>
-  </footer>
+    $(this.form).append(this.current.input.element);
+    var messageObj = $('<div class="message to typing"><div class="typing_loader"></div></div>');
+    setTimeout(function(){
+        $(this.wrapper).find('#messages').append(messageObj);
+        this.scrollDown();
+    }.bind(this), 150);
 
-      </div>
+    this.parameters.eventList.onInputSubmit(this, function(){
+        //goes to next state and prints question
+        if(this.next()){
+            setTimeout(function(){
+                this.printQuestion();
+            }.bind(this), 300);
+        } else {
+            this.parameters.eventList.onSubmitForm(this);
+        }
+    }.bind(this));
+};
 
-        
+(function($){
+    $.fn.convform = function(options){
+        var wrapper = this;
+        var originalFormHtml = $(wrapper).html();
+        $(this).addClass('conv-form-wrapper');
+
+        var parameters = $.extend(true, {}, {
+            placeHolder : 'Type Here',
+            typeInputUi : 'textarea',
+            timeOutFirstQuestion : 1200,
+            buttonClassStyle : 'icon2-arrow',
+            selectInputStyle: 'show',
+            selectInputDisabledText: 'Select an option',
+            eventList : {
+                onSubmitForm : function(convState) {
+                    console.log('completed');
+                    convState.form.submit();
+                    return true;
+                },
+                onInputSubmit : function(convState, readyCallback) {
+                    if(convState.current.input.hasOwnProperty('callback')) {
+                        if(typeof convState.current.input.callback === 'string') {
+                            window[convState.current.input.callback](convState, readyCallback);
+                        } else {
+                            convState.current.input.callback(convState, readyCallback);
+                        }
+                    } else {
+                        readyCallback();
+                    }
+                }
+            },
+            formIdName : 'convForm',
+            inputIdName : 'userInput',
+            loadSpinnerVisible : '',
+            buttonText: '▶'
+        }, options);
+
+        /*
+        * this will create an array with all inputs, selects and textareas found
+        * inside the wrapper, in order of appearance
+        */
+        var inputs = $(this).find('input, select, textarea').map(function(){
+            var input = {};
+            if($(this).attr('name'))
+                input['name'] = $(this).attr('name');
+            if($(this).attr('data-no-answer'))
+                input['noAnswer'] = true;
+            if($(this).attr('required'))
+                input['required'] = true;
+            if($(this).attr('type'))
+                input['type'] = $(this).attr('type');
+            input['questions'] = $(this).attr('data-conv-question').split("|");
+            if($(this).attr('data-pattern'))
+                input['pattern'] = $(this).attr('data-pattern');
+            if($(this).attr('data-callback'))
+                input['callback'] = $(this).attr('data-callback');
+            if($(this).is('select')) {
+                input['type'] = 'select';
+                input['answers'] = $(this).find('option').map(function(){
+                    var answer = {};
+                    answer['text'] = $(this).text();
+                    answer['value'] = $(this).val();
+                    if($(this).attr('data-callback'))
+                        answer['callback'] = $(this).attr('data-callback');
+                    return answer;
+                }).get();
+                if($(this).prop('multiple')){
+                    input['multiple'] = true;
+                    input['selected'] = [];
+                } else {
+                    input['multiple'] = false;
+                    input['selected'] = "";
+                }
+            }
+            if($(this).parent('div[data-conv-case]').length) {
+                input['case'] = $(this).parent('div[data-conv-case]').attr('data-conv-case');
+                input['fork'] = $(this).parent('div[data-conv-case]').parent('div[data-conv-fork]').attr('data-conv-fork');
+            }
+            input['element'] = this;
+            $(this).detach();
+            return input;
+        }).get();
+
+        if(inputs.length) {
+            //hides original form so users cant interact with it
+            var form = $(wrapper).find('form').hide();
+
+            var inputForm;
+            parameters.inputIdHashTagName = '#' + parameters.inputIdName;
+
+            switch(parameters.typeInputUi) {
+                case 'input':
+                    inputForm = $('<form id="' + parameters.formIdName + '" class="convFormDynamic"><div class="options dragscroll"></div><input id="' + parameters.inputIdName + '" type="text" placeholder="'+ parameters.placeHolder +'" class="userInputDynamic"></><button type="submit" class="submit">'+parameters.buttonText+'</button><span class="clear"></span></form>');
+                    break;
+                case 'textarea':
+                    inputForm = $('<form id="' + parameters.formIdName + '" class="convFormDynamic"><div class="options dragscroll"></div><textarea id="' + parameters.inputIdName + '" rows="1" placeholder="'+ parameters.placeHolder +'" class="userInputDynamic"></textarea><button type="submit" class="submit">'+parameters.buttonText+'</button><span class="clear"></span></form>');
+                    break;
+                default :
+                    console.log('typeInputUi must be input or textarea');
+                    return false;
+            }
+
+            //appends messages wrapper and newly created form with the spinner load
+            $(wrapper).append('<div class="wrapper-messages"><div class="spinLoader ' + parameters.loadSpinnerVisible + ' "></div><div id="messages"></div></div>');
+            $(wrapper).append(inputForm);
+
+            //creates new single state with first input
+            var singleState = new SingleConvState(inputs[0]);
+            //creates new wrapper state with first singlestate as current and gives access to wrapper element
+            var state = new ConvState(wrapper, singleState, form, parameters, originalFormHtml);
+            //creates all new single states with inputs in order
+            for(var i in inputs) {
+                if(i != 0 && inputs.hasOwnProperty(i)){
+                    singleState.next = new SingleConvState(inputs[i]);
+                    singleState = singleState.next;
+                }
+            }
+
+            //prints first question
+            setTimeout(function() {
+                $.when($('div.spinLoader').addClass('hidden')).done(function() {
+                    var messageObj = $('<div class="message to typing"><div class="typing_loader"></div></div>');
+                    $(state.wrapper).find('#messages').append(messageObj);
+                    state.scrollDown();
+                    state.printQuestion();
+                });
+            }, parameters.timeOutFirstQuestion);
+
+            //binds enter to answer submit and change event to search for select possible answers
+            $(inputForm).find(parameters.inputIdHashTagName).keypress(function(e){
+                if(e.which == 13) {
+                    var input = $(this).val();
+                    e.preventDefault();
+                    if(state.current.input.type=="select" && !state.current.input.multiple){
+                        if(state.current.input.required) {
+                            state.wrapper.find('#userInputBot').addClass('error');
+                        } else {
+                            var results = state.current.input.answers.filter(function (el) {
+                                return el.text.toLowerCase().indexOf(input.toLowerCase()) != -1;
+                            });
+                            if (results.length) {
+                                state.current.input.selected = results[0];
+                                $(this).parent('form').submit();
+                            } else {
+                                state.wrapper.find(parameters.inputIdHashTagName).addClass('error');
+                            }
+                        }
+                    } else if(state.current.input.type=="select" && state.current.input.multiple) {
+                        if(input.trim() != "") {
+                            var results = state.current.input.answers.filter(function(el){
+                                return el.text.toLowerCase().indexOf(input.toLowerCase()) != -1;
+                            });
+                            if(results.length){
+                                if(state.current.input.selected.indexOf(results[0].value) == -1){
+                                    state.current.input.selected.push(results[0].value);
+                                    state.wrapper.find(parameters.inputIdHashTagName).val("");
+                                } else {
+                                    state.wrapper.find(parameters.inputIdHashTagName).val("");
+                                }
+                            } else {
+                                state.wrapper.find(parameters.inputIdHashTagName).addClass('error');
+                            }
+                        } else {
+                            if(state.current.input.selected.length) {
+                                $(this).parent('form').submit();
+                            }
+                        }
+                    } else {
+                        if(input.trim()!='' && !state.wrapper.find(parameters.inputIdHashTagName).hasClass("error")) {
+                            $(this).parent('form').submit();
+                        } else {
+                            $(state.wrapper).find(parameters.inputIdHashTagName).focus();
+                        }
+                    }
+                }
+                autosize.update($(state.wrapper).find(parameters.inputIdHashTagName));
+            }).on('input', function(e){
+                if(state.current.input.type=="select"){
+                    var input = $(this).val();
+                    var results = state.current.input.answers.filter(function(el){
+                        return el.text.toLowerCase().indexOf(input.toLowerCase()) != -1;
+                    });
+                    if(results.length){
+                        state.wrapper.find(parameters.inputIdHashTagName).removeClass('error');
+                        state.printAnswers(results, state.current.input.multiple);
+                    } else {
+                        state.wrapper.find(parameters.inputIdHashTagName).addClass('error');
+                    }
+                } else if(state.current.input.hasOwnProperty('pattern')) {
+                    var reg = new RegExp(state.current.input.pattern, 'i');
+                    if(reg.test($(this).val())) {
+                        state.wrapper.find(parameters.inputIdHashTagName).removeClass('error');
+                    } else {
+                        state.wrapper.find(parameters.inputIdHashTagName).addClass('error');
+                    }
+                }
+            });
+
+            $(inputForm).find('button.submit').click(function(e){
+                var input = $(state.wrapper).find(parameters.inputIdHashTagName).val();
+                e.preventDefault();
+                if(state.current.input.type=="select" && !state.current.input.multiple){
+                    if(state.current.input.required && !state.current.input.selected) {
+                        return false;
+                    } else {
+                        if (input == parameters.placeHolder) input = '';
+                        var results = state.current.input.answers.filter(function (el) {
+                            return el.text.toLowerCase().indexOf(input.toLowerCase()) != -1;
+                        });
+                        if (results.length) {
+                            state.current.input.selected = results[0];
+                            $(this).parent('form').submit();
+                        } else {
+                            state.wrapper.find(parameters.inputIdHashTagName).addClass('error');
+                        }
+                    }
+                } else if(state.current.input.type=="select" && state.current.input.multiple) {
+                    if(state.current.input.required && state.current.input.selected.length === 0) {
+                        return false;
+                    } else {
+                        if (input.trim() != "" && input != parameters.placeHolder) {
+                            var results = state.current.input.answers.filter(function (el) {
+                                return el.text.toLowerCase().indexOf(input.toLowerCase()) != -1;
+                            });
+                            if (results.length) {
+                                if (state.current.input.selected.indexOf(results[0].value) == -1) {
+                                    state.current.input.selected.push(results[0].value);
+                                    state.wrapper.find(parameters.inputIdHashTagName).val("");
+                                } else {
+                                    state.wrapper.find(parameters.inputIdHashTagName).val("");
+                                }
+                            } else {
+                                state.wrapper.find(parameters.inputIdHashTagName).addClass('error');
+                            }
+                        } else {
+                            if (state.current.input.selected.length) {
+                                $(this).removeClass('glow');
+                                $(this).parent('form').submit();
+                            }
+                        }
+                    }
+                } else {
+                    if(input.trim() != '' && !state.wrapper.find(parameters.inputIdHashTagName).hasClass("error")){
+                        $(this).parent('form').submit();
+                    } else {
+                        $(state.wrapper).find(parameters.inputIdHashTagName).focus();
+                    }
+                }
+                autosize.update($(state.wrapper).find(parameters.inputIdHashTagName));
+            });
+
+            //binds form submit to state functions
+            $(inputForm).submit(function(e){
+                e.preventDefault();
+                var answer = $(this).find(parameters.inputIdHashTagName).val();
+                $(this).find(parameters.inputIdHashTagName).val("");
+                if(state.current.input.type == 'select'){
+                    if(!state.current.input.multiple){
+                        state.answerWith(state.current.input.selected.text, state.current.input.selected);
+                    } else {
+                        state.answerWith(state.current.input.selected.join(', '), state.current.input.selected);
+                    }
+                } else {
+                    state.answerWith(answer, answer);
+                }
+            });
 
 
-        <div id="id_feedback_dialog" title="Help us improve" style="display:none">
-    <div id="id_feedback_dialog_blurb_big" class="dialog_blurb_big">
-        It's always a pleasure to hear from you!
-    </div>
-    <div id="id_feedback_dialog_blurb_small">
-        Ask us a question, or tell us what you love or hate about PythonAnywhere.<br/>
-        We'll get back to you over email ASAP.
-    </div>
-    <textarea id="id_feedback_dialog_text" rows="6"></textarea>
-    <input id="id_feedback_dialog_email_address" type="text" placeholder="Email address (optional - only necessary if you would like us to contact you)"/>
-    
-    <div id="id_feedback_dialog_error" class="pa_hidden">
-        Sorry, there was an error connecting to the server. <br/>Please try again in a few moments...
-    </div>
-    <div class="dialog_buttons">
-        <img id="id_feedback_dialog_spinner" src="/static/anywhere/images/spinner-small.gif" />
-        <button class="btn btn-primary" id="id_feedback_dialog_ok_button">OK</button>
-        <button class="btn btn-default" id="id_feedback_dialog_cancel_button">Cancel</button>
-    </div>
-</div>
+            if(typeof autosize == 'function') {
+                $textarea = $(state.wrapper).find(parameters.inputIdHashTagName);
+                autosize($textarea);
+            }
 
-
-        
-            <script>
-                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-                ga('create', 'UA-18014859-6', 'auto');
-                ga('send', 'pageview');
-            </script>
-        
-
-        
-        <!-- preload font awesome fonts to avoid glitch when switching icons -->
-        <div style="width: 0; height: 0; overflow: hidden"><i class="fa fa-square-o fa-3x" ></i></div>
-    </body>
-</html>
+            return state;
+        } else {
+            return false;
+        }
+    }
+})( jQuery );
